@@ -15,12 +15,19 @@ cursor = cnx.cursor(dictionary=True)
 def index():
     return redirect('departamentos')
 
-@app.route('/departamentos')
+@app.route('/departamentos') #O tambien "/actas/ubigeo/Peru" pero cambiar el redirect linea 16 
 def get_departamentos():
     cursor.callproc('sp_getDepartamentos', (1, 25))
     for data in cursor.stored_results():
         departamentos = data.fetchall()
     return departamentos
+
+@app.route('/actas/ubigeo/') #O tambien "/continentes
+def get_continentes():
+    cursor.callproc('sp_getDepartamentos', (25, 30))
+    for data in cursor.stored_results():
+        continentes = data.fetchall()
+    return continentes
 
 @app.route('/provincias/<int:id_departamento>')
 def get_provincias(id_departamento):
@@ -63,6 +70,6 @@ def get_GrupoVotacion(id_GrupoVotacion):
     for data in cursor.stored_results():
         grupo_votacion = data.fetchone()
     return grupo_votacion
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
