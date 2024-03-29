@@ -1,19 +1,5 @@
 let ambito=''
 
-//Bloques para desactivar
-document.getElementById('departamentos').innerHTML=`<select name="cdgoProv" id="cdgoProv" class="form-control" onchange="getDistritos(this.value);" disabled>;
-      <option selected="selected" value="" disabled>--SELECCIONE--</option>`
-document.getElementById('provincias').innerHTML = `<select name="cdgoProv" id="cdgoProv" class="form-control" onchange="getDistritos(this.value);" disabled>;
-    <option selected="selected" value="" disabled>--SELECCIONE--</option>`
-document.getElementById('distritos').innerHTML = `
-<select name="cdgoDist" id="cdgoDist" class="form-control" onchange="getLocales(this.value);" disabled>;
-<option selected="selected" value="" disabled>--SELECCIONE--</option>`
-document.getElementById('divLocal').innerHTML = `
-<select name="actas_ubigeo" id="actas_ubigeo" class="form-control" disabled>
-<option selected="selected" value="" disabled>--SELECCIONE--</option>`
-document.getElementById('divMesas').innerHTML=``
-document.getElementById('divDetalle').innerHTML = ``
-
 const getAmbito = async(ubigeo)=>{
     ambito=ubigeo
     const data = await fetch(`http://127.0.0.1:5000/actas/ubigeo/${ambito}`)

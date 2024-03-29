@@ -1,7 +1,12 @@
-const getNacional = async()=>{
-    const data = await fetch(`https://oaemdl.es/onpe_sweb_php/participacion/Nacional`)
-    if(data.status == 200){
-        const departamentos = await data.json()
+const url = window.location.href;
+const ambito = url.includes('participacion_total/nacional') ? 'Nacional' : 'Extranjero';
+
+const getParticipacion = async () => {
+    const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}`);
+    if (data.status == 200) {
+        const departamentos = await data.json();
+        console.log('Metodo getParticipacion: ')
+        console.log(departamentos);
         let html = `
             <tr class="titulo_tabla"> 
                 <td>DEPARTAMENTO</td>
@@ -14,7 +19,7 @@ const getNacional = async()=>{
         `
         departamentos.forEach(departamento=>{
             html+=`
-                <tr onclick="location.href='?id=${departamento.DPD}'"onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+                <tr onclick="getDepartamento('${departamento.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${departamento.DPD}</td>
                     <td>${departamento.TV}</td>
                     <td>${departamento.PTV}</td>
@@ -39,11 +44,12 @@ const getNacional = async()=>{
     }
 }
 
-const getDepartamento = async () => {
-    const dep = new URLSearchParams(window.location.search).get('id');
-    const data = await fetch(`https://oaemdl.es/onpe_sweb_php/participacion/Nacional/${dep}`);
+const getDepartamento = async (departamento) => {
+    const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}/${departamento}`);
     if (data.status == 200) {
         const provincias = await data.json();
+        console.log('Metodo getDepartamento: ')
+        console.log(provincias);
         let html = ` 
             <tr class="titulo_tabla">
                 <td>PROVINCIA</td>
@@ -56,7 +62,7 @@ const getDepartamento = async () => {
         `;
         provincias.forEach(provincia => {
             html += `
-                <tr onclick="location.href='?dep=${dep}&id=${provincia.DPD}'" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+                <tr onclick="getProvincia('${departamento.DPD}', '${provincia.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${provincia.DPD}</td>
                     <td>${provincia.TV}</td>
                     <td>${provincia.PTV}</td>
@@ -81,12 +87,13 @@ const getDepartamento = async () => {
     }
 };
 
-const getProvincia = async () => {
-    const dep = new URLSearchParams(window.location.search).get('dep');
-    const pro = new URLSearchParams(window.location.search).get('id');
-    const data = await fetch(`https://oaemdl.es/onpe_sweb_php/participacion/Nacional/${dep}/${pro}`);
+
+const getProvincia = async (departamento,provincia) => {
+    const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}/${departamento}/${provincia}`);
     if (data.status == 200) {
         const distritos = await data.json();
+        console.log('Metodo getProvincias: ')
+        console.log(distritos);
         let html = `
             <tr class="titulo_tabla">
                 <td>DISTRITOS</td>
@@ -99,7 +106,7 @@ const getProvincia = async () => {
         `;
         distritos.forEach(distrito => {
             html += `
-            <tr onclick="location.href='?dep=${dep}&id=${pro}&id=${distrito.DPD}'" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+                <tr onclick="getElectores('${departamento}', '${provincia}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${distrito.DPD}</td>
                     <td>${distrito.TV}</td>
                     <td>${distrito.PTV}</td>
@@ -124,13 +131,12 @@ const getProvincia = async () => {
     }
 };
 
-const getElectores = async()=>{
-    const dep = new URLSearchParams(window.location.search).get('dep');
-    const pro = new URLSearchParams(window.location.search).get('id');
-    const dis = new URLSearchParams(window.location.search).get('id');
-    const data = await fetch(`https://oaemdl.es/onpe_sweb_php/participacion/Nacional/${dep}/${pro}/${dis}`)
+const getElectores = async(departamento,provincia)=>{
+    const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}/${departamento}/${provincia}`);
     if(data.status == 200){
         const votos = await data.json();
+        console.log('Metodo getElectores: ')
+        console.log(votos);
         let html=`
         <thead>
             <tr>
@@ -140,24 +146,25 @@ const getElectores = async()=>{
         </thead>
         <tbody>
         `
-        votos.forEach(voto =>{
-            html+=`
-            <tr>
-                <td>TOTAL: ${voto.TV}</td>
-                <td>TOTAL: ${voto.TA}</td>
-            </tr>
-            <tr>
-                <td>% TOTAL: ${voto.PTV}</td>
-                <td>% TOTAL: ${voto.PTA}</td>
-            </tr>
-            `
-        });
+        const voto = votos[0]; // Capturar el primer registro
+        console.log(voto)
+        html+=`
+        <tr>
+            <td>TOTAL: ${voto.TV}</td>
+            <td>TOTAL: ${voto.TA}</td>
+        </tr>
+        <tr>
+            <td>% TOTAL: ${voto.PTV}</td>
+            <td>% TOTAL: ${voto.PTA}</td>
+        </tr>
+        `;
         html +=`
             </tbody>
         `
         document.getElementById('tablaparticipacion').innerHTML = html;
     }
 }
+
 
 /*
 <thead>

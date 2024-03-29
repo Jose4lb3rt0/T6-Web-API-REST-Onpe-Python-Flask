@@ -1,35 +1,8 @@
-﻿<!DOCTYPE html> 
-<html>
-    <head>
-      <title>ONPE - Oficina Nacional de Procesos Electorales</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"  /> 
-      <meta http-equiv="X-UA-Compatible" content="IE=9" />
-      <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="screen"/>
-      <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" media="screen"/>
-      <link href="css/style.css" rel="stylesheet" type="text/css" media="screen"/>
-    </head>
-    <body>
-      <header>
-        <div class="container">
-          <div class="pull-left logo-onpe">
-            <div class="pull-left">
-              <a href="index.html"><img src="images/onpe-trans.png"></a>
-            </div>
-            
-            <div class="pull-left">
-              <h1>PRESENTACIÓN DE RESULTADOS</h1>
-            </div>
-          </div>
-  
-          <div class="pull-right logo">
-            <img src="images/eegg2016-trans.png" width="218" height="35">
-          </div>
-        </div>
-      </header>
-        
+﻿{%extends "index.html"%}
+{%block relleno%}    
       <div id="imprimelo3">
         <div class="container">
-          <img src="images/f-participacion.jpg" width="1170" height="248" class="img-responsive mg30top">
+          <img src="{{url_for('static', filename="images/f-participacion.jpg")}}" width="1170" height="248" class="img-responsive mg30top">
 
           <section class="menu navbar-default menu05">
             <div class="navbar-header">
@@ -47,10 +20,10 @@
                   <a href="./presidenciales.html">PRESIDENCIAL</a>
                 </li>
                 <li class="bt-amarillo">
-                  <a href="./cctas-ubigeo.html">ACTAS</a>
+                  <a href="{{url_for('actas_ubigeo')}}">ACTAS</a>
                 </li>
                 <li class="bt-rojo act-rojo">
-                  <a href="./participacion.html">PARTICIPACIÓN CIUDADANA</a>
+                  <a href="{{url_for('participacion')}}">PARTICIPACIÓN CIUDADANA</a>
                 </li>
               </ul>
             </nav>
@@ -94,7 +67,7 @@
                   </div>
                   <div class="col-xs-12 line pbot30">
                     <div class="col-xs-12 col-md-6">
-                      <img src="estadistico.png?_tot_participacion=80.093&amp;_tot_ausentismo=19.907" class="img-responsive">
+                      <img src="{{url_for('static',filename="images/estadistico.png")}}" class="img-responsive">
                     </div>
                     <div class="col-xs-12 col-md-6">
                       <p class="subtitle">ELECTORES HÁBILES 22,901,954</p>
@@ -123,10 +96,10 @@
 
                   <div class="col-xs-12 pbot30 ptop20">
                     <div class="col-xs-12 col-md-6">
-                      <a href="./participacion_total.html?id=extranjero"><img src="images/icono_extranjero.jpg" class="img-responsive"></a>
+                      <a href="{{url_for('participacion_totalExtranjero')}}"><img src="{{url_for('static', filename="images/icono_extranjero.jpg")}}" class="img-responsive"></a>
                     </div>
                     <div class="col-xs-12 col-md-6">
-                      <a href="./participacion_total.html?id=nacional"><img src="images/icono_nacional.jpg" class="img-responsive"></a>
+                      <a href="{{url_for('participacion_totalNacional')}}"><img src="{{url_for('static', filename="images/icono_nacional.jpg")}}" class="img-responsive"></a>
                     </div>
                   </div>
 
@@ -137,19 +110,4 @@
         </div>	
       </div>
       <div id="divDetalle"></div>
-
-      <footer class="footer-inside">
-          <div class="container ">
-            <div class="row">
-              <div class="col-md-12 direc01">
-                <span>CONTÁCTENOS</span>
-                <p>Jr. Washington 1894, Cercado de Lima </p>
-                <p>Correo electrónico: <a href="#">informes@onpe.gob.pe</a></p>
-                <p>Central Telefónica: 417 - 0630 / Lunes a Viernes 08:30 - 16:30 hrs</p>
-              </div>
-            </div>
-          </div>
-      </footer>
-        
-    </body>
-</html>
+{%endblock relleno%}
