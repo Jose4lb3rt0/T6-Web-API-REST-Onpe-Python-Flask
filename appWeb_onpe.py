@@ -99,9 +99,21 @@ def participacion_total_ambito(ambito):
 @app.route('/participacion_total/<ambito>/<departamento>')
 def get_participacionDepartamento(ambito, departamento):
     return render_template('participacion_total.html')
-
-
-#3.2. Participación Total API REST Selección de Ambito (Extranjero o Peru) -> Devuelve los departamento
+#3.3. Participacion API REST Peru
+@app.route('/participacion/Nacional/') #
+def ApiRest_ParticipacionNacional():
+    cursor.callproc('sp_getVotos', (1, 25))
+    for data in cursor.stored_results():
+        votosNacional = data.fetchall()
+    return votosNacional
+#3.4. Participacion API REST Extranjero
+@app.route('/participacion/Extranjero/')
+def ApiRest_ParticipacionExtranjero():
+    cursor.callproc('sp_getVotos', (26, 30))
+    for data in cursor.stored_results():
+        votosExtranjero = data.fetchall()
+    return votosExtranjero
+#3.5. Participación Total API REST Selección de Ambito (Extranjero o Peru) -> Devuelve los departamento
 @app.route('/participacion/<ambito>')
 def get_votosPorAmbito(ambito):
     print (ambito)
@@ -112,14 +124,14 @@ def get_votosPorAmbito(ambito):
     for data in cursor.stored_results():
         resultado_votosAmbito = data.fetchall()
     return resultado_votosAmbito
-#3.3. Participacion Total API REST Ambito -> Departamentos -> Devuelve las provincias
+#3.6. Participacion Total API REST Ambito -> Departamentos -> Devuelve las provincias
 @app.route('/participacion/<ambito>/<departamento>')
 def get_votosPorDepartamento(ambito, departamento):
     cursor.callproc('sp_getVotosDepartamento', (departamento,)) 
     for data in cursor.stored_results():
         resultado_votosDepartamento = data.fetchall()
     return resultado_votosDepartamento
-#3.4. Participacion Total API REST Ambito -> Departamentos -> Provincia -> Devuelve los distritos
+#3.7. Participacion Total API REST Ambito -> Departamentos -> Provincia -> Devuelve los distritos
 @app.route('/participacion/<ambito>/<departamento>/<provincia>')
 def get_votosPorProvincia(ambito, departamento,provincia):
     cursor.callproc('sp_getVotosProvincia', (provincia,)) 
