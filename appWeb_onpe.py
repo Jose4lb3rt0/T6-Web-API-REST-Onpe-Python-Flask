@@ -7,65 +7,51 @@ cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor(dictionary=True)
 app = Flask(__name__)
 
-
+#Index
 @app.route('/')
 def on():
     return redirect('/index')
-
 @app.route('/index')
 def index():
     return render_template('selector.html')
 
-#1.Actas Ubigeo:
+#1. Actas Ubigeo TEMPLATE:
 @app.route('/actas_ubigeo')
 def actas_ubigeo():
     return render_template('actas_ubigeo.html')
-#1.1.1. API REST de continentes extranjero (devuelve el continente)
-@app.route('/actas/ubigeo/')
-def get_departamentosExtranjero():
-    cursor.callproc('sp_getDepartamentos', (26, 30))
-    for data in cursor.stored_results():
-        continentes = data.fetchall()
-    return continentes
-#1.1.2. API REST de departamentos Peruanos (devuelve departamentos)
-@app.route('/actas/ubigeo/Peru/')
-def get_departamentosPeru():
-    cursor.callproc('sp_getDepartamentos', (1, 25))
-    for data in cursor.stored_results():
-        departamentos = data.fetchall()
-    return departamentos
-#1.1.3. Selección de las rutas de ubigeo (Extranjero o Peru)
-@app.route('/actas/ubigeo/<ambito>') #Este va al javascript
+#1.1. API REST Selección de ambitos (Peruano o Extranjero):
+@app.route('/actas/ubigeo/<ambito>') 
 def get_seleccionAmbito(ambito):
-    if ambito == 'Peru':
-        cursor.callproc('sp_getDepartamentos', (1, 25))
-    else:
+    if ambito == 'Extranjero':
         cursor.callproc('sp_getDepartamentos', (26, 30))
+    else:
+        cursor.callproc('sp_getDepartamentos', (1, 25))
     for data in cursor.stored_results():
         resultadoAmbito = data.fetchall()
+    print(ambito)
     return resultadoAmbito
-#1.2. API REST para entrar en el departamento y devolver las provincias
+#1.2. Actas Ubigeo API REST Ambito -> Departamento = Devuelve las provincias:
 @app.route('/actas/ubigeo/<ambito>/<departamento>')
-def get_provinciasPorDepartamento(ambito,departamento): # Dos parametros para acceder a la api desde su URL
-    cursor.callproc('sp_getProvinciasByDepartamento', (departamento,)) # Un solo parametro para la sentencia
+def get_provinciasPorDepartamento(ambito,departamento): 
+    cursor.callproc('sp_getProvinciasByDepartamento', (departamento,))
     for data in cursor.stored_results():
         provincias = data.fetchall()
     return provincias
-#1.3. API REST para entrar en la provincia y devolver los distritos
+#1.3. Actas Ubigeo API REST Ambito -> Departamento -> Provincias = Devuelve los distritos:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>')
 def get_distritosPorProvincia(ambito,departamento,provincia):
     cursor.callproc('sp_getDistritosByProvincia', (provincia,))
     for data in cursor.stored_results():
         distritos = data.fetchall()
     return distritos
-#1.4. API REST para entrar en los distritos y devolver los locales de votacion
+#1.4. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos = Devuelve los locales:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>/<distrito>')
 def get_localesPorDistrito(ambito,departamento,provincia,distrito):
     cursor.callproc('sp_getLocalesVotacionByDistrito', (provincia,distrito,))
     for data in cursor.stored_results():
         localesVotacion = data.fetchall()
     return localesVotacion
-#1.5. API REST para entrar en los locales y devolver los grupos de votacion
+#1.5. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos -> Locales = Devuelve los grupos:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>/<distrito>/<local>')
 def get_gruposPorProvinciaYDistrito(ambito, departamento, provincia, distrito, local):
     cursor.callproc('sp_getGruposVotacionByProvinciaDistritoLocal', (provincia, distrito, local,))
@@ -73,17 +59,18 @@ def get_gruposPorProvinciaYDistrito(ambito, departamento, provincia, distrito, l
         gruposVotacion = data.fetchall()
     return gruposVotacion
 
-#2. Actas Numero:
+#2. Actas Numero - TEMPLATE:
 @app.route('/actas_numero')
 def actas_numero():
     return render_template('actas_numero.html')
-#2.1. Recoger los detalles de las mesas 
-@app.route('/actas/numero/<id_GrupoVotacion>', methods=['GET'])
+#2. Actas Numero - API REST: 
+@app.route('/actas/numero/<id_GrupoVotacion>')
 def get_GrupoVotacion(id_GrupoVotacion):
     cursor.callproc('sp_getGrupoVotacion', (id_GrupoVotacion,))
     for data in cursor.stored_results():
         grupo_votacion = data.fetchone()
     return grupo_votacion
+
 
 #3. Participación
 @app.route('/participacion')
@@ -104,7 +91,6 @@ def get_templateDepartamentos(ambito, departamento):
     for data in cursor.stored_results():
         departamentos = data.fetchall()
     return render_template('participacion_total.html')
-
 # 3.3. API REST votos extranjeros
 @app.route('/participacion/Extranjero')
 def get_votosExtranjero():
@@ -112,7 +98,6 @@ def get_votosExtranjero():
     for data in cursor.stored_results():
         votos_extranjero = data.fetchall()
     return votos_extranjero
-
 # 3.4. API REST votos nacionales
 @app.route('/participacion/Nacional')
 def get_votosNacionales():

@@ -1,8 +1,18 @@
+const lblDepartamento = document.getElementById('lblDepartamento');
+const lblProvincia = document.getElementById('lblProvincia');
+const lblDistrito = document.getElementById('lblDistrito');
 let ambito=''
 
 const getAmbito = async(ubigeo)=>{
     ambito=ubigeo
     const data = await fetch(`http://127.0.0.1:5000/actas/ubigeo/${ambito}`)
+
+    if (ubigeo === 'Extranjero') {
+      lblDepartamento.textContent = 'Continente: ';
+      lblProvincia.textContent = 'País: ';
+      lblDistrito.textContent = 'Ciudad: ';
+    }
+
     if (data.status == 200){
         const departamentos = await data.json()
         let html = `<select name="cdgoDep" id="cdgoDep" class="form-control" onchange="getProvincias(this.value);">
@@ -57,13 +67,13 @@ const getProvincias = async(departamento) =>{
         const provincias = await data.json()
         let html = `<select name="cdgoProv" id="cdgoProv" class="form-control" onchange="getDistritos(this.value);">;
             <option selected="selected" value="">--SELECCIONE--</option>`
-        
-        if(provincias.length > 1){
+
+        if (Array.isArray(provincias)) {
           provincias.forEach(provincia => {
-            html += `<option value="${provincia.Detalle}">${provincia.Detalle}</option>`
-        });
-        }else{
-            html += `<option value="${provincias.Detalle}">${provincias.Detalle}</option>`
+              html += `<option value="${provincia.Detalle}">${provincia.Detalle}</option>`;
+          });
+        } else {
+            html += `<option value="${provincias.Detalle}">${provincias.Detalle}</option>`;
         }
 
         html += `</select>`
@@ -94,13 +104,12 @@ const getDistritos = async (provincia) => {
         <select name="cdgoDist" id="cdgoDist" class="form-control" onchange="getLocales(this.value);">
         <option selected="selected" value="">--SELECCIONE--</option>`
         
-
-        if(distritos.length > 1){
+        if (Array.isArray(distritos)) {
           distritos.forEach(distrito => {
-            html += `<option value="${distrito.Detalle}">${distrito.Detalle}</option>`
-        });
-        }else{
-            html += `<option value="${distritos.Detalle}">${distritos.Detalle}</option>`
+              html += `<option value="${distrito.Detalle}">${distrito.Detalle}</option>`;
+          });
+        } else {
+            html += `<option value="${distritos.Detalle}">${distritos.Detalle}</option>`;
         }
 
         html += `</select>`
@@ -127,7 +136,7 @@ const getLocales = async(distrito)=>{
         <select name="actas_ubigeo" id="actas_ubigeo" class="form-control" onchange="getMesas(this.value);">
         <option value="" selected="selected">--SELECCIONE--</option>
         `
-        //para que detecte cuando hay solo un local, el elseif es para arreglar el nombre que se mostraba como undefined
+        
         if (locales.length > 1) {
           locales.forEach(local => {
               html += `<option value="${local.RazonSocial}">${local.RazonSocial}</option>`;
