@@ -19,7 +19,22 @@ def index():
 @app.route('/actas_ubigeo')
 def actas_ubigeo():
     return render_template('actas_ubigeo.html')
-#1.1. API REST Selección de ambitos (Peruano o Extranjero):
+
+#1.2. Actas Ubigeo API REST Peru
+@app.route('/actas/ubigeo/Peru/') #
+def ApiRest_ActasUbigeoPeru():
+    cursor.callproc('sp_getDepartamentos', (1, 25))
+    for data in cursor.stored_results():
+        departamentos = data.fetchall()
+    return departamentos
+#1.3. Actas Ubigeo API REST Extranjero
+@app.route('/actas/ubigeo/Extranjero/')
+def ApiRest_ActasUbigeoExtranjero():
+    cursor.callproc('sp_getDepartamentos', (26, 30))
+    for data in cursor.stored_results():
+        continentes = data.fetchall()
+    return continentes
+#1.4. API REST Selección de ambitos (Peruano o Extranjero):
 @app.route('/actas/ubigeo/<ambito>') 
 def get_seleccionAmbito(ambito):
     if ambito == 'Extranjero':
@@ -30,28 +45,28 @@ def get_seleccionAmbito(ambito):
         resultadoAmbito = data.fetchall()
     print(ambito)
     return resultadoAmbito
-#1.2. Actas Ubigeo API REST Ambito -> Departamento = Devuelve las provincias:
+#1.5. Actas Ubigeo API REST Ambito -> Departamento = Devuelve las provincias:
 @app.route('/actas/ubigeo/<ambito>/<departamento>')
 def get_provinciasPorDepartamento(ambito,departamento): 
     cursor.callproc('sp_getProvinciasByDepartamento', (departamento,))
     for data in cursor.stored_results():
         provincias = data.fetchall()
     return provincias
-#1.3. Actas Ubigeo API REST Ambito -> Departamento -> Provincias = Devuelve los distritos:
+#1.6. Actas Ubigeo API REST Ambito -> Departamento -> Provincias = Devuelve los distritos:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>')
 def get_distritosPorProvincia(ambito,departamento,provincia):
     cursor.callproc('sp_getDistritosByProvincia', (provincia,))
     for data in cursor.stored_results():
         distritos = data.fetchall()
     return distritos
-#1.4. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos = Devuelve los locales:
+#1.7. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos = Devuelve los locales:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>/<distrito>')
 def get_localesPorDistrito(ambito,departamento,provincia,distrito):
     cursor.callproc('sp_getLocalesVotacionByDistrito', (provincia,distrito,))
     for data in cursor.stored_results():
         localesVotacion = data.fetchall()
     return localesVotacion
-#1.5. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos -> Locales = Devuelve los grupos:
+#1.8. Actas Ubigeo API REST Ambito -> Departamento -> Provincias -> Distritos -> Locales = Devuelve los grupos:
 @app.route('/actas/ubigeo/<ambito>/<departamento>/<provincia>/<distrito>/<local>')
 def get_gruposPorProvinciaYDistrito(ambito, departamento, provincia, distrito, local):
     cursor.callproc('sp_getGruposVotacionByProvinciaDistritoLocal', (provincia, distrito, local,))
@@ -63,7 +78,7 @@ def get_gruposPorProvinciaYDistrito(ambito, departamento, provincia, distrito, l
 @app.route('/actas_numero')
 def actas_numero():
     return render_template('actas_numero.html')
-#2. Actas Numero - API REST: 
+#2.1. Actas Numero - API REST: 
 @app.route('/actas/numero/<id_GrupoVotacion>')
 def get_GrupoVotacion(id_GrupoVotacion):
     cursor.callproc('sp_getGrupoVotacion', (id_GrupoVotacion,))
@@ -76,53 +91,35 @@ def get_GrupoVotacion(id_GrupoVotacion):
 @app.route('/participacion')
 def participacion():
     return render_template('participacion.html')
-#3.1. Participación extranjero
-@app.route('/participacion_total/extranjero')
-def participacion_totalExtranjero():
+#3.1. Participación Total TEMPLATE Ambito
+@app.route('/participacion_total/<ambito>')
+def participacion_total_ambito(ambito):
     return render_template('participacion_total.html')
-#3.2. Participación nacional
-@app.route('/participacion_total/nacional')
-def participacion_totalNacional():
-    return render_template('participacion_total.html')
-#3.3. Ruta para departamento valido para extranjero y nacional
+#3.2. Participacion Total TEMPLATE Ambito -> Departamentos -> Devuelve las provincias
 @app.route('/participacion_total/<ambito>/<departamento>')
-def get_templateDepartamentos(ambito, departamento):
-    cursor.callproc('sp_getVotosDepartamento', (departamento,))
-    for data in cursor.stored_results():
-        departamentos = data.fetchall()
+def get_participacionDepartamento(ambito, departamento):
     return render_template('participacion_total.html')
-# 3.3. API REST votos extranjeros
-@app.route('/participacion/Extranjero')
-def get_votosExtranjero():
-    cursor.callproc('sp_getVotos', (26, 30))
-    for data in cursor.stored_results():
-        votos_extranjero = data.fetchall()
-    return votos_extranjero
-# 3.4. API REST votos nacionales
-@app.route('/participacion/Nacional')
-def get_votosNacionales():
-    cursor.callproc('sp_getVotos', (1, 25))
-    for data in cursor.stored_results():
-        votos_nacionales = data.fetchall()
-    return votos_nacionales
-# 3.5. Selección de las rutas de ubigeo (Extranjero o Peru)
+
+
+#3.2. Participación Total API REST Selección de Ambito (Extranjero o Peru) -> Devuelve los departamento
 @app.route('/participacion/<ambito>')
 def get_votosPorAmbito(ambito):
-    if ambito == 'Nacional':
-        cursor.callproc('sp_getVotos', (1, 25))
-    else:
+    print (ambito)
+    if ambito == 'extranjero':
         cursor.callproc('sp_getVotos', (26, 30))
+    elif ambito == 'nacional':
+        cursor.callproc('sp_getVotos', (1, 25))
     for data in cursor.stored_results():
         resultado_votosAmbito = data.fetchall()
     return resultado_votosAmbito
-# 3.6. API REST votos de departamento
+#3.3. Participacion Total API REST Ambito -> Departamentos -> Devuelve las provincias
 @app.route('/participacion/<ambito>/<departamento>')
 def get_votosPorDepartamento(ambito, departamento):
     cursor.callproc('sp_getVotosDepartamento', (departamento,)) 
     for data in cursor.stored_results():
         resultado_votosDepartamento = data.fetchall()
     return resultado_votosDepartamento
-# 3.7. API REST votos de provincia
+#3.4. Participacion Total API REST Ambito -> Departamentos -> Provincia -> Devuelve los distritos
 @app.route('/participacion/<ambito>/<departamento>/<provincia>')
 def get_votosPorProvincia(ambito, departamento,provincia):
     cursor.callproc('sp_getVotosProvincia', (provincia,)) 
@@ -131,4 +128,5 @@ def get_votosPorProvincia(ambito, departamento,provincia):
     return resultado_votosProvincia
 
 if __name__== '__main__':
-    app.run(debug=True)
+    #Host y puerto, bien importante para que funcione el link que va al javascript
+    app.run(host='127.0.0.1', port=5000,debug=True)

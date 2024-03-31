@@ -96,10 +96,14 @@
 
                   <div class="col-xs-12 pbot30 ptop20">
                     <div class="col-xs-12 col-md-6">
-                      <a href="{{url_for('participacion_totalExtranjero')}}"><img src="{{url_for('static', filename="images/icono_extranjero.jpg")}}" class="img-responsive"></a>
+                      <a href="{{ url_for('participacion_total_ambito', ambito='extranjero') }}">
+                        <img src="{{ url_for('static', filename='images/icono_extranjero.jpg') }}" class="img-responsive">
+                      </a>
                     </div>
                     <div class="col-xs-12 col-md-6">
-                      <a href="{{url_for('participacion_totalNacional')}}"><img src="{{url_for('static', filename="images/icono_nacional.jpg")}}" class="img-responsive"></a>
+                      <a href="{{ url_for('participacion_total_ambito', ambito='nacional') }}">
+                        <img src="{{ url_for('static', filename='images/icono_nacional.jpg') }}" class="img-responsive">
+                      </a>                   
                     </div>
                   </div>
 

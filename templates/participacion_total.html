@@ -35,7 +35,7 @@
           <div class="col-xs-12 col-md-3">
             <div class="menu-interna">
               <ul>
-                <li><a href="./participacion.html" class="act-izq">TOTAL</a></li>
+                <li><a href="{{url_for('participacion')}}" class="act-izq">TOTAL</a></li>
               </ul>
             </div>
           </div>
@@ -127,7 +127,7 @@
                   <table class="table21">
                     <tbody id="resultados">
                       
-                      <!--Contenido-->
+                      <!--Contenido-->                    
 
                     </tbody>
                   </table>
@@ -148,9 +148,10 @@
   <script>
     const staticUrl = "{{ url_for('static', filename='') }}";
   </script>
+  <!--Metodos-->
   <script>getParticipacion()</script>
-    <script>getDepartamento(departamento)</script>
-    <script>getProvincia(provincia)</script>
-    <script>getElectores(provincia)</script>
+  <script>getDepartamento(departamento)</script>
+  <script>getProvincia(provincia)</script>
+  <script>getElectores(provincia)</script>
 
 {%endblock relleno%}

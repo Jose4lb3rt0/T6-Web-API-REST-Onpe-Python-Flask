@@ -1,5 +1,5 @@
 const url = window.location.href;
-const ambito = url.includes('participacion_total/nacional') ? 'Nacional' : 'Extranjero';
+let ambito = url.includes('participacion_total/nacional') ? 'nacional' : 'extranjero';
 
 const getParticipacion = async () => {
     const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}`);
@@ -18,8 +18,10 @@ const getParticipacion = async () => {
             </tr>
         `
         departamentos.forEach(departamento=>{
+            //<tr onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
             html+=`
-                <tr onclick="getDepartamento('${departamento.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+            <tr onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
+
                     <td>${departamento.DPD}</td>
                     <td>${departamento.TV}</td>
                     <td>${departamento.PTV}</td>
@@ -44,7 +46,9 @@ const getParticipacion = async () => {
     }
 }
 
+let departamentoElegido=''
 const getDepartamento = async (departamento) => {
+    departamentoElegido=departamento
     const data = await fetch(`http://127.0.0.1:5000/participacion/${ambito}/${departamento}`);
     if (data.status == 200) {
         const provincias = await data.json();
@@ -62,7 +66,7 @@ const getDepartamento = async (departamento) => {
         `;
         provincias.forEach(provincia => {
             html += `
-                <tr onclick="getProvincia('${departamento.DPD}', '${provincia.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+            <tr id="departamento_${departamento.DPD}" onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
                     <td>${provincia.DPD}</td>
                     <td>${provincia.TV}</td>
                     <td>${provincia.PTV}</td>
@@ -106,7 +110,7 @@ const getProvincia = async (departamento,provincia) => {
         `;
         distritos.forEach(distrito => {
             html += `
-                <tr onclick="getElectores('${departamento}', '${provincia}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+            <tr onclick="getProvincia('${departamento.DPD}', '${provincia.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${distrito.DPD}</td>
                     <td>${distrito.TV}</td>
                     <td>${distrito.PTV}</td>
@@ -128,6 +132,7 @@ const getProvincia = async (departamento,provincia) => {
             </tr>
         `;
         document.getElementById('resultados').innerHTML = html;
+        getDepartamento(departamentos[0].DPD);
     }
 };
 

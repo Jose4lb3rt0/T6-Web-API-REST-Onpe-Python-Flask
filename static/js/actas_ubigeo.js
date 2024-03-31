@@ -5,14 +5,18 @@ let ambito=''
 
 const getAmbito = async(ubigeo)=>{
     ambito=ubigeo
-    const data = await fetch(`http://127.0.0.1:5000/actas/ubigeo/${ambito}`)
-
+    const data = await fetch(`http://127.0.0.1:5000/actas/ubigeo/${ambito}`) //Tener cuidado con slash al final
+    console.log(ambito)
     if (ubigeo === 'Extranjero') {
       lblDepartamento.textContent = 'Continente: ';
       lblProvincia.textContent = 'País: ';
       lblDistrito.textContent = 'Ciudad: ';
+    } else if (ubigeo === 'Peru') {
+        lblDepartamento.textContent = 'Departamento: ';
+        lblProvincia.textContent = 'Provincia: ';
+        lblDistrito.textContent = 'Distrito: ';
     }
-
+  
     if (data.status == 200){
         const departamentos = await data.json()
         let html = `<select name="cdgoDep" id="cdgoDep" class="form-control" onchange="getProvincias(this.value);">
