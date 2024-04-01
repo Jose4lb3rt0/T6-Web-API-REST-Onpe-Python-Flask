@@ -87,7 +87,7 @@ def get_GrupoVotacion(id_GrupoVotacion):
     return grupo_votacion
 
 
-#3. Participación
+#3. Participación TEMPLATE
 @app.route('/participacion')
 def participacion():
     return render_template('participacion.html')
@@ -99,6 +99,11 @@ def participacion_total_ambito(ambito):
 @app.route('/participacion_total/<ambito>/<departamento>')
 def get_participacionDepartamento(ambito, departamento):
     return render_template('participacion_total.html')
+#3.2. Participacion Total TEMPLATE Ambito -> Departamentos -> Devuelve las provincias
+@app.route('/participacion_total/<ambito>/<departamento>/<provincia>')
+def get_participacionProvincia(ambito, departamento,provincia):
+    return render_template('participacion_total.html')
+
 #3.3. Participacion API REST Peru
 @app.route('/participacion/Nacional/') #
 def ApiRest_ParticipacionNacional():

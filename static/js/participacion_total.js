@@ -18,10 +18,9 @@ const getParticipacion = async () => {
             </tr>
         `
         departamentos.forEach(departamento=>{
-            //<tr onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
+            // <tr onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
             html+=`
-            <tr onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
-
+            <tr onclick="getDepartamento('${departamento.DPD}')" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
                     <td>${departamento.DPD}</td>
                     <td>${departamento.TV}</td>
                     <td>${departamento.PTV}</td>
@@ -43,6 +42,26 @@ const getParticipacion = async () => {
             </tr>
         `
         document.getElementById('resultados').innerHTML=html
+
+        html=`
+            <thead>
+                <tr>
+                    <th>PARTICIPACIÓN</th>
+                    <th>AUSENTISMO</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>TOTAL: 17,953,367</td>
+                    <td>TOTAL: 4,063,663</td>
+                </tr>
+                <tr>
+                    <td>% TOTAL: 81.543%</td>
+                    <td>% TOTAL: 18.457%</td>
+                </tr>
+            </tbody>
+        `
+        document.getElementById('tablaparticipacion').innerHTML = html;
     }
 }
 
@@ -64,9 +83,10 @@ const getDepartamento = async (departamento) => {
                 <td>ELECTORES HÁBILES</td>
             </tr>
         `;
+       
         provincias.forEach(provincia => {
             html += `
-            <tr id="departamento_${departamento.DPD}" onclick="getDepartamento('${departamento.DPD}'); location.href='/participacion_total/${ambito}/${departamento.DPD}'" onmouseover="this.style.cursor = 'pointer'; this.style.color = 'grey'" onmouseout="this.style.color = 'black'" style="cursor: pointer; color: black;">
+            <tr onclick="getProvincia('${departamento.DPD}', '${provincia.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${provincia.DPD}</td>
                     <td>${provincia.TV}</td>
                     <td>${provincia.PTV}</td>
@@ -88,6 +108,32 @@ const getDepartamento = async (departamento) => {
             </tr>
         `;
         document.getElementById('resultados').innerHTML = html;
+ 
+        html=`
+        <thead>
+            <tr>
+            <th>PARTICIPACIÓN</th>
+            <th>AUSENTISMO</th>
+            </tr>
+        </thead>
+        <tbody>
+            `
+            const provincia = provincias[0];
+            console.log(provincia)
+            html+=`
+            <tr>
+                <td>TOTAL: ${provincia.TV}</td>
+                <td>TOTAL: ${provincia.TA}</td>
+            </tr>
+            <tr>
+                <td>% TOTAL: ${provincia.PTV}</td>
+                <td>% TOTAL: ${provincia.PTA}</td>
+            </tr>
+            `;
+            html +=`
+        </tbody>
+        `
+        document.getElementById('tablaparticipacion').innerHTML = html;
     }
 };
 
@@ -110,7 +156,7 @@ const getProvincia = async (departamento,provincia) => {
         `;
         distritos.forEach(distrito => {
             html += `
-            <tr onclick="getProvincia('${departamento.DPD}', '${provincia.DPD}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
+            <tr onclick="getElectores('${departamento}', '${provincia}')" onmouseover="this.style.cursor = &quot;pointer&quot;; this.style.color = &quot;grey&quot;" onmouseout="this.style.color = &quot;black&quot;" style="cursor: pointer; color: black;">
                     <td>${distrito.DPD}</td>
                     <td>${distrito.TV}</td>
                     <td>${distrito.PTV}</td>
@@ -132,6 +178,33 @@ const getProvincia = async (departamento,provincia) => {
             </tr>
         `;
         document.getElementById('resultados').innerHTML = html;
+
+        html=`
+        <thead>
+            <tr>
+            <th>PARTICIPACIÓN</th>
+            <th>AUSENTISMO</th>
+            </tr>
+        </thead>
+        <tbody>
+        `
+        const distrito = distritos[0];
+        console.log(distrito)
+        html+=`
+        <tr>
+            <td>TOTAL: ${distrito.TV}</td>
+            <td>TOTAL: ${distrito.TA}</td>
+        </tr>
+        <tr>
+            <td>% TOTAL: ${distrito.PTV}</td>
+            <td>% TOTAL: ${distrito.PTA}</td>
+        </tr>
+        `;
+        html +=`
+            </tbody>
+        `
+        document.getElementById('tablaparticipacion').innerHTML = html;
+
         getDepartamento(departamentos[0].DPD);
     }
 };
@@ -151,7 +224,7 @@ const getElectores = async(departamento,provincia)=>{
         </thead>
         <tbody>
         `
-        const voto = votos[0]; // Capturar el primer registro
+        const voto = votos[0];
         console.log(voto)
         html+=`
         <tr>
@@ -167,6 +240,10 @@ const getElectores = async(departamento,provincia)=>{
             </tbody>
         `
         document.getElementById('tablaparticipacion').innerHTML = html;
+
+        html=`
+        `
+        document.getElementById('resultados').innerHTML = html;
     }
 }
 
